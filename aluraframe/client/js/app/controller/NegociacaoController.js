@@ -23,14 +23,38 @@ class NegociacaoController {
         this._data = $('#data');
         this._quantidade = $('#quantidade');
         this._valor = $('#valor');
-        this._listaNegociacoes = new ListaNegociacoes();
+        this._listaNegociacoes = new ListaNegociacoes(
+
+            /**
+             * We want to pass the function responsable for the visual update to be
+             * triggered on the change os the ListaNegociacoes object. We have a context problem here.
+             * All the objects for the update functions are instanciated on controller so we must keep 
+             * the context of the controler for this function. 
+             * We can:
+             * - pass a function with a context parameter and use Reflect.apply to set the context on the call of the function;
+             * - use the bind function, applying it on the declaration of the function;
+             * - we can use the arrow function directly because it keeps the context of its declaration;
+             * 
+             * function(){
+             *      this._negociacoesView.update(this._listaNegociacoes);
+             *      this._mensagemView.update(this._mensagem);
+             *  }.bind(this) 
+             */
+            
+            
+            () => {
+                this._negociacoesView.update(this._listaNegociacoes);
+                this._mensagemView.update(this._mensagem);
+            }
+
+        );
 
         this._negociacoesView = new NegociacoesView($("#negociacoesView"));
         this._negociacoesView.update(this._listaNegociacoes);
 
         this._mensagem = new Mensagem();
         this._mensagemView = new MensagemView($("#mensagemView"));
-        this._mensagemView.update(this._mensagem);
+        
 
     }
 
@@ -38,14 +62,26 @@ class NegociacaoController {
         /* we are prevent the default behavior of the form refresh of html5 */
         event.preventDefault();
         
+        this._mensagem.text = "Negociacao adicionada com sucesso";
         this._listaNegociacoes.adiciona( this._criaNegociacao() );
 
         this._limpaFomulario();
 
-        this._negociacoesView.update(this._listaNegociacoes);
+        //this._negociacoesView.update(this._listaNegociacoes);
 
-        this._mensagem.text = "Negociacao adicionada com sucesso";
-        this._mensagemView.update(this._mensagem);
+        //this._mensagem.text = "Negociacao adicionada com sucesso";
+        //this._mensagemView.update(this._mensagem);
+
+    }
+
+    apaga(event) {
+        
+        this._mensagem.text = "Negociacoes apagas com sucesso";
+        this._listaNegociacoes.esvazia();
+        //this._negociacoesView.update(this._listaNegociacoes);
+
+        //this._mensagem.text = "Negociacoes apagas com sucesso";
+        //this._mensagemView.update(this._mensagem);
 
     }
 

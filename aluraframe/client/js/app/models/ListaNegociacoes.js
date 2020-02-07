@@ -1,11 +1,18 @@
 class ListaNegociacoes {
 
-    constructor() {
+    constructor(updateReference) {
         this._negociacoes = []
+        this._updateViewFunction = updateReference;
     }
 
     adiciona(negociacao) {
         this._negociacoes.push(negociacao);
+        this._updateViewFunction();
+    }
+
+    esvazia(){
+        this._negociacoes = [];
+        this._updateViewFunction();
     }
 
     get negociacoes() {
